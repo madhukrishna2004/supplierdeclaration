@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeSphere Global - Supplier Declaration</title>
+
+  <!-- Bootstrap & Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #f0f4fa, #e9f5fb);
+      color: #333;
+    }
+
+    .card {
+      border-radius: 16px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .info-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .info-left,
+    .info-right {
+      flex: 1 1 48%;
+      min-width: 300px;
+    }
+
+    .info-left img {
+      max-width: 180px;
+    }
+
+    .cta-button {
+      background-color: #1d8cf8;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .cta-button:hover {
+      background-color: #0a7ad1;
+    }
+
+    .video-wrapper iframe {
+      width: 100%;
+      height: 300px;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .info-section {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container py-5">
+
+    <!-- Lottie Welcome -->
+    <div class="text-center mb-4">
+      <lottie-player 
+        src="{{ url_for('static', filename='Animation - 1751883092647.json') }}" 
+        background="transparent" 
+        speed="1" 
+        style="width: 150px; height: 150px;" 
+        loop autoplay>
+      </lottie-player>
+
+      <h2 class="fw-bold text-primary">Supplier Declaration Portal</h2>
+      <p class="text-muted">Digitize your compliance workflow with TradeSphere Global.</p>
+    </div>
+
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 mb-4">
+      <div class="container d-flex justify-content-between">
+        <span class="navbar-text fw-semibold text-primary">
+          👤 Logged in as: {{ session['supplier_username'] }}
+        </span>
+        <a href="{{ url_for('supplier_logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+      </div>
+    </nav>
+
+    <!-- Company Info Section -->
+    <div class="card mb-4">
+      <div class="card-header">Welcome to TradeSphere Global</div>
+      <div class="card-body">
+        <div class="info-section">
+          <div class="info-left">
+            <img src="https://www.krislynx.com/static/media/tradesphereglobal.d705c15bb83fa5728e7a.png" alt="Logo" />
+            <h4 class="mt-3">AI-Powered Global Trade Tariff Portal</h4>
+            <p>TradeSphere simplifies international trade compliance by providing accurate, up-to-date tariff information for UK, EU, and global markets.</p>
+            <ul class="ps-3">
+              <li>Comprehensive HS code lookup</li>
+              <li>Real-time tariff updates</li>
+              <li>Preferential agreement eligibility checks</li>
+              <li>Easy business integration</li>
+            </ul>
+            <a href="https://trade-sphereglobal.com/demo" class="btn btn-outline-primary mt-2">View Demo</a>
+          </div>
+          <div class="info-right">
+            <h5 class="text-success mb-2">How to Fill Supplier Declaration</h5>
+            <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Documents Section -->
+    <div class="card mb-4">
+      <div class="card-header">Upload Consent Document</div>
+      <div class="card-body">
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Upload Form -->
+        <form action="/submit" method="POST" enctype="multipart/form-data">
+          <div class="row g-4 align-items-end">
+
+            <!-- Consent File Upload -->
+            <div class="col-md-9">
+              <label class="form-label">
+                Consent Document <span class="text-muted">(PDF, DOCX, or TXT)</span>:
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light">📎</span>
+                <input type="file" id="consentFile" name="consent" class="form-control" accept=".pdf,.docx,.txt" required>
+              </div>
+              <div id="filePreview" class="mt-2 small text-muted"></div>
+            </div>
+
+            <!-- Side Action Button -->
+            <div class="col-md-3 text-end">
+              <label class="form-label d-none d-md-block">&nbsp;</label>
+              <a href="https://trade-sphereglobal.com/support" class="btn btn-outline-info w-100">Need Help?</a>
+            </div>
+
+            <!-- Save Button -->
+            <div class="col-md-12 text-end">
+              <button type="submit" class="btn btn-primary mt-3">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #f0f4fa, #e9f5fb);
+            padding: 20px;
+        }
+        .card {
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        th {
+            background-color: #0d6efd;
+            color: white;
+            text-align: center;
+        }
+        td, input, select {
+            vertical-align: middle !important;
+            text-align: center;
+        }
+        .table-responsive {
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+        input[type="text"], select, input[type="file"] {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 6px 10px;
+        }
+        .add-row-btn {
+            background-color: #198754;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">TradeSphere Global - Commodity Entry Sheet</h4>
+            <button class="btn add-row-btn" type="button" onclick="addRows(5)">+ Add 5 More Rows</button>
+        </div>
+        <div class="card-body table-responsive">
+            <!-- ✅ FORM setup -->
+            <form id="entryForm" method="POST" action="/submitform" enctype="multipart/form-data">
+                <input type="hidden" name="supplier_id" value="{{ supplier_id }}">
+                <input type="hidden" name="supplier_username" value="{{ session['username'] }}">
+
+                <table class="table table-bordered table-hover align-middle text-center">
+                    <thead>
+                        <tr>
+                            <th>Part Number</th>
+                            <th>Description</th>
+                            <th>Commodity Code (10 Digit)</th>
+                            <th>Country of Origin</th>
+                            <th>EU–UK Preference Applies</th>
+                            <th>Upload Doc (if Yes)</th>
+                            <th>Automated Short Code</th>
+                            <th>Commodity Code Heading</th>
+                            <th>HMRC Description</th>
+                            <th>Estimated UK Import Duty</th>
+                            <th>Supporting Document Path</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entryTable">
+                        <!-- Rows injected dynamically -->
+                    </tbody>
+                </table>
+
+                <!-- ✅ Submit button -->
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success"> Submit Entries</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" name="supplier_id" value="{{ supplier_id }}">
+
+<script>
+    let rowCount = 0;
+
+    function addRows(count) {
+        const table = document.getElementById("entryTable");
+        for (let i = 0; i < count; i++) {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><input type="text" name="husq[]" class="form-control" required></td>
+                <td><input type="text" name="description[]" class="form-control" required></td>
+                <td>
+                    <input type="text"
+                           name="commodity_code[]"
+                           class="form-control"
+                           maxlength="10"
+                           placeholder="Enter 10-digit code"
+                           onblur="autoFill(${rowCount})"
+                           required>
+                </td>
+                <td>
+                    <select name="origin[]" class="form-control" required>
+                        <option value="">Select</option>
+                        <option value="UK">UK</option>
+                        <option value="EU">EU</option>
+                        <option value="JP">Japan</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </td>
+                <td>
+                    <select name="preference[]" class="form-control" onchange="toggleUpload(this, ${rowCount})" required>
+                        <option value="No">No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                </td>
+                <td><input type="file" name="doc[${rowCount}]" class="form-control d-none" id="doc-${rowCount}" accept=".pdf"></td>
+                <td><input type="text" readonly class="form-control" id="shortcode-${rowCount}"></td>
+                <td><input type="text" readonly class="form-control" id="heading-${rowCount}"></td>
+                <td><input type="text" readonly class="form-control" id="hmrcdesc-${rowCount}"></td>
+                <td><input type="text" readonly class="form-control" id="duty-${rowCount}"></td>
+                <td><input type="text" readonly class="form-control" id="docpath-${rowCount}"></td>
+            `;
+            table.appendChild(row);
+            rowCount++;
+        }
+    }
+
+    function toggleUpload(select, index) {
+        const fileInput = document.getElementById(`doc-${index}`);
+        fileInput.classList.toggle('d-none', select.value !== 'Yes');
+    }
+
+    function autoFill(index) {
+        const codes = document.getElementsByName('commodity_code[]');
+        if (!codes[index]) return;
+
+        const code = codes[index].value.trim();
+        if (!/^\d{10}$/.test(code)) {
+            alert("Commodity code must be a 10-digit number.");
+            return;
+        }
+
+        fetch('/autofill', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ commodity_code: code })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById(`shortcode-${index}`).value = data.short_code || '';
+            document.getElementById(`heading-${index}`).value = data.heading || '';
+            document.getElementById(`hmrcdesc-${index}`).value = data.hmrc_description || '';
+            document.getElementById(`duty-${index}`).value = data.duty || '';
+            document.getElementById(`docpath-${index}`).value = data.doc_path || '';
+        })
+        .catch(err => {
+            console.error("AutoFill failed:", err);
+            alert("Autofill failed. Please try again.");
+        });
+    }
+
+    window.onload = () => addRows(5); // Load 5 default rows
+</script>
+
+ 
+    <!-- CTA -->
+    <div class="text-center mt-4">
+      <h4 class="mb-3">Ready to streamline your compliance?</h4>
+      <a href="https://trade-sphereglobal.com" target="_blank" class="cta-button">Explore Now</a>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('consentFile').addEventListener('change', function (e) {
+      const preview = document.getElementById('filePreview');
+      preview.innerHTML = '';
+      const file = e.target.files[0];
+      if (file) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        let icon = '📎';
+        if (ext === 'pdf') icon = '📄';
+        else if (ext === 'docx' || ext === 'doc') icon = '📝';
+        else if (ext === 'txt') icon = '📘';
+
+        const fileName = file.name.length > 40 ? file.name.substring(0, 37) + '...' : file.name;
+        preview.innerHTML = `<span class="badge bg-light text-dark">${icon} ${fileName}</span>`;
+      }
+    });
+  </script>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-light pt-5 mt-5">
+    <div class="container">
+      <div class="row gy-4">
+
+        <!-- Company Intro -->
+        <div class="col-md-4">
+          <h5 class="text-white fw-semibold">KrisLynx & TradeSphere Global</h5>
+          <p class="small text-light mb-2">
+            <strong>KrisLynx LLP</strong> is your AI/IT innovation partner, igniting tomorrow’s solutions with intelligence, insight, and integrity.
+          </p>
+          <p class="small text-light">
+            <strong>TradeSphere Global</strong> is a flagship product by KrisLynx — an AI-powered platform that streamlines supplier declarations and tariff compliance across the UK, EU, Japan, and beyond.
+          </p>
+        </div>
+
+        <!-- Explore -->
+        <div class="col-md-2">
+          <h6 class="text-info mb-3">Explore</h6>
+          <ul class="list-unstyled small">
+            <li><a href="/" class="text-light text-decoration-none">Home</a></li>
+            <li><a href="/services" class="text-light text-decoration-none">Services</a></li>
+            <li><a href="/about" class="text-light text-decoration-none">About</a></li>
+            <li><a href="/careers" class="text-light text-decoration-none">Careers</a></li>
+          </ul>
+        </div>
+
+        <!-- Products -->
+        <div class="col-md-2">
+          <h6 class="text-info mb-3">Products</h6>
+          <ul class="list-unstyled small">
+            <li><a href="https://trade-sphereglobal.com" target="_blank" class="text-light text-decoration-none">TradeSphere Global</a></li>
+            <li><span class="text-light">AI Insights</span></li>
+          </ul>
+        </div>
+
+        <!-- Resources -->
+        <div class="col-md-2">
+          <h6 class="text-info mb-3">Resources</h6>
+          <ul class="list-unstyled small">
+            <li><a href="/smart-questionnaire" class="text-light text-decoration-none">Smart Questionnaire</a></li>
+            <li><a href="/contact" class="text-light text-decoration-none">Contact</a></li>
+            <li><a href="/privacy-policy" class="text-light text-decoration-none">Privacy Policy</a></li>
+            <li><a href="/terms-of-service" class="text-light text-decoration-none">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div class="col-md-2">
+          <h6 class="text-info mb-3">Contact</h6>
+          <p class="small mb-1"><a href="mailto:connect@trade-sphereglobal.com" class="text-cyan text-decoration-none">connect@trade-sphereglobal.com</a></p>
+          <p class="small text-light mb-1">📍 Kurnool, Andhra Pradesh, India</p>
+          <p class="small text-light mb-1">📞 <a href="tel:+919381757484" class="text-light text-decoration-none">+91 93817 57484</a></p>
+          <p class="small"><a href="https://www.linkedin.com/company/krislynx" target="_blank" class="text-light text-decoration-none">LinkedIn: @KrisLynx</a></p>
+          <p class="text-light small fst-italic mt-2">Building trust globally, delivering locally.</p>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="border-top border-secondary mt-4 pt-3 d-flex flex-column flex-md-row justify-content-between align-items-center text-light small">
+          <div>© {{ current_year }} KrisLynx LLP. All rights reserved.</div>
+          <div class="d-flex gap-3 mt-2 mt-md-0">
+            <span>SSL Secure</span>
+            <span>ISO Compliant</span>
+            <span>AI-Ready</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

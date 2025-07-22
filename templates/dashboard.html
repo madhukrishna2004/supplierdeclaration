@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeSphere Global Dashboard | Supplier Declaration Automation</title>
+
+  <!-- SEO Meta -->
+  <meta name="description" content="AI-powered dashboard for managing supplier declarations under UK & EU trade agreements." />
+  <meta name="keywords" content="supplier declaration, trade compliance, EU UK trade, origin documents, AI automation" />
+
+  <!-- OG Meta -->
+  <meta property="og:title" content="TradeSphere Global Dashboard" />
+  <meta property="og:description" content="Smart dashboard for UK-EU supplier declaration management." />
+  <meta property="og:image" content="https://www.krislynx.com/assets/supplier-declaration-cover.png" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- Bootstrap & FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Lottie -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <style>
+    body.dashboard-page {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #e9f7ff, #f0fbf7);
+      color: #2c3e50;
+    }
+
+    .navbar {
+      background-color: #4ab6ff !important;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      color: #ffffff !important;
+    }
+
+    .dashboard-wrapper {
+      padding: 60px 0;
+    }
+
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    @media (min-width: 992px) {
+      .dashboard-container {
+        flex-direction: row;
+        gap: 40px;
+      }
+    }
+
+    .card {
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+      border: none;
+    }
+
+    .card-header {
+      font-size: 1.1rem;
+      font-weight: 600;
+      background-color: #5ed4aa !important;
+      color: #fff !important;
+    }
+
+    .email-section {
+      flex: 0.7;
+      min-width: 300px;
+      background-color: #ffffff;
+    }
+
+    .logs-section {
+      flex: 2.3;
+      background-color: #ffffff;
+    }
+
+    .lottie-box {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background-color: #4ab6ff;
+      border: none;
+    }
+
+    .btn-outline-primary {
+      border-color: #4ab6ff;
+      color: #4ab6ff;
+    }
+
+    .btn-outline-success {
+      border-color: #28a745;
+      color: #28a745;
+    }
+
+    .table th, .table td {
+      vertical-align: middle;
+      font-size: 0.95rem;
+    }
+
+    .table-dark {
+      background-color: #4ab6ff;
+      color: white;
+    }
+
+    .badge {
+      font-size: 0.85rem;
+      border-radius: 50px;
+    }
+  </style>
+</head>
+
+<body class="dashboard-page">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg shadow">
+    <div class="container">
+      <a class="navbar-brand" href="#">📊 Supplier Declarations Dashboard</a>
+      <div>
+        <a href="/logout" class="btn btn-light">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard -->
+  <div class="container dashboard-wrapper">
+    <div class="dashboard-container">
+
+      <!-- Email Section -->
+      <div class="email-section card">
+        <div class="card-header text-center py-3">
+          ✉️ Send New Email
+        </div>
+        <div class="card-body text-center p-4">
+          <div class="lottie-box mb-3">
+            <lottie-player src="/static/Animation - 1751864823927.json" background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay></lottie-player>
+          </div>
+          <h5 class="fw-bold mb-2">Send Supplier Declaration Requests</h5>
+          <p class="mb-3 small">Quickly send requests with auto-tracking.</p>
+          <a href="/send_email" class="btn btn-primary btn-sm px-4 py-2 shadow">Go to Email Page</a>
+        </div>
+      </div>
+
+      <!-- Logs Section -->
+      <div class="logs-section card">
+        <div class="card-header text-center py-3">
+           Sent Emails Log
+        </div>
+        <div class="card-body table-responsive p-4">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark text-center">
+              <tr>
+                <th>#</th>
+                <th>📧 Recipient</th>
+                <th>📅 Sent Time</th>
+                <th>📄 Commodity Sheet</th>
+                <th>📝 Supplier Consent</th>
+                <th>✅ Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if sent_emails %}
+              {% for email in sent_emails %}
+              <tr>
+                <td class="text-center">{{ loop.index }}</td>
+                <td>{{ email.recipient }}</td>
+                <td>{{ email.sent_time }}</td>
+                <td class="text-center">
+  {% if email.commodity_link %}
+    <a href="{{ email.commodity_link }}" target="_blank" class="btn btn-outline-primary btn-sm">📄 View</a>
+  {% else %}
+    <span class="text-muted">Not Available</span>
+  {% endif %}
+</td>
+
+                <td class="text-center">
+                  {% if email.consent %}
+                  <a href="{{ email.consent }}" target="_blank" class="btn btn-outline-success btn-sm">📝 View</a>
+                  {% else %}
+                  <span class="text-muted">Not Uploaded</span>
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  {% if email.commodity_link and email.consent %}
+                  <span class="badge bg-success text-white px-3 py-2">✅ Completed</span>
+                  {% else %}
+                  <span class="badge bg-warning text-dark px-3 py-2">⏳ Pending</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td colspan="6" class="text-center text-muted">No emails have been sent yet.</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

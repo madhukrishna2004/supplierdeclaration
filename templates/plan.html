@@ -1,0 +1,25 @@
+<!-- templates/plan.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Your Plan</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>Select a Plan</h2>
+    <form method="POST" action="{{ url_for('plan_selection') }}">
+      <div class="plan-option">
+        <input type="radio" name="plan" value="basic" id="basic" required>
+        <label for="basic">Basic Plan</label>
+      </div>
+      <div class="plan-option">
+        <input type="radio" name="plan" value="premium" id="premium">
+        <label for="premium">Premium Plan</label>
+      </div>
+      <button class="btn" type="submit">Confirm Plan</button>
+    </form>
+  </div>
+</body>
+</html>

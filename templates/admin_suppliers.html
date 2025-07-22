@@ -1,0 +1,60 @@
+<!-- 📬 Reminder Button with Confirmation -->
+<div class="d-flex justify-content-end mb-3">
+  <button onclick="confirmReminder()" class="btn btn-warning btn-sm shadow">
+    📬 Send Reminder Emails
+  </button>
+</div>
+<script>
+  function confirmReminder() {
+    if (confirm("Are you sure you want to send reminder emails to all suppliers with pending submissions?")) {
+      // Redirect to backend route
+      window.location.href = "/admin/send_reminders";
+    }
+  }
+</script>
+
+<h2 class="text-center mt-4 mb-3">📋 All Supplier Submissions</h2>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>📧 Email</th>
+        <th>📄 Commodity Sheet</th>
+        <th>📝 Consent</th>
+        <th>✅ Status</th>
+        <th>📅 Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for supplier in suppliers %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ supplier.username }}</td>
+        <td>
+          {% if supplier.commodity_link %}
+            <a href="{{ supplier.commodity_link }}" target="_blank" class="btn btn-outline-primary btn-sm">View</a>
+          {% else %}
+            <span class="text-muted">Not Submitted</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if supplier.consent %}
+            <a href="{{ supplier.consent }}" target="_blank" class="btn btn-outline-success btn-sm">View</a>
+          {% else %}
+            <span class="text-muted">Not Uploaded</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if supplier.commodity_link and supplier.consent %}
+            <span class="badge bg-success">Completed</span>
+          {% else %}
+            <span class="badge bg-warning text-dark">Pending</span>
+          {% endif %}
+        </td>
+        <td>{{ supplier.created_at if supplier.created_at else "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

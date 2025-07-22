@@ -1,0 +1,424 @@
+/* General Styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f7f9fc; /* Light fresh vibe background */
+  color: #444;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: #333;
+}
+
+/* Navbar */
+.navbar {
+  background: linear-gradient(90deg, #4CAF50, #2196F3);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #fff !important;
+  letter-spacing: 1px;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: #fff;
+  font-size: 1.1rem;
+  margin: 0 10px;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: #FFD700;
+  transition: color 0.3s ease-in-out;
+}
+
+/* Header Section */
+header {
+  background: linear-gradient(135deg, #4CAF50, #2196F3);
+  color: white;
+  text-align: center;
+  padding: 100px 20px;
+}
+
+header h1 {
+  font-size: 3rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+header p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+}
+
+header a {
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #fff;
+  background: #FFD700;
+  padding: 12px 30px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: background 0.3s ease-in-out, transform 0.3s ease;
+}
+
+header a:hover {
+  background: #FFA500;
+  transform: translateY(-3px);
+}
+
+/* Features Section */
+.features-section {
+  padding: 60px 20px;
+}
+
+.features-section h2 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.features-section .row .col-md-4 {
+  margin-bottom: 20px;
+}
+
+.features-section .row .col-md-4 h5 {
+  font-size: 1.5rem;
+  margin: 10px 0;
+  color: #444;
+}
+
+.features-section i {
+  color: #FFD700;
+  transition: transform 0.3s ease-in-out;
+}
+
+.features-section i:hover {
+  transform: scale(1.2);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(90deg, #4CAF50, #2196F3);
+  border: none;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  background: #388E3C;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-outline-light {
+  border: 2px solid #fff;
+  color: #fff;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: 50px;
+}
+
+.btn-outline-light:hover {
+  background: white;
+  color: #4CAF50;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Cards */
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.card h2 {
+  color: #4CAF50;
+}
+
+.card form .form-control {
+  border-radius: 30px;
+  border: 2px solid #ddd;
+  padding: 10px 15px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.card form .form-control:focus {
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Footer */
+footer {
+  background: #333;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+}
+
+footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+footer p a {
+  color: #FFD700;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+footer p a:hover {
+  color: #FFA500;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+.features-section .row .col-md-4 {
+  animation: fadeInUp 1s ease-in-out;
+}
+
+header h1, header p, header a {
+  animation: fadeInUp 1s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  header h1 {
+      font-size: 2rem;
+  }
+
+  header p {
+      font-size: 1rem;
+  }
+
+  .features-section h2 {
+      font-size: 2rem;
+  }
+}
+/* General */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to right, #e3f2fd, #bbdefb);
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Navbar */
+.navbar {
+  background: linear-gradient(90deg, #4CAF50, #2196F3);
+  padding: 15px;
+  text-align: center;
+}
+
+.navbar .navbar-brand {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Hero Section */
+.hero {
+  background: url('https://source.unsplash.com/1600x900/?technology') no-repeat center;
+  background-size: cover;
+  text-align: center;
+  padding: 100px 20px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hero h1 {
+  font-size: 3rem;
+  animation: fadeInDown 1.5s ease-in-out;
+}
+
+/* Content */
+.content {
+  padding: 50px 20px;
+}
+
+.content h2 {
+  border-bottom: 3px solid #4CAF50;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+/* Footer */
+footer {
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 15px;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+/* General Styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f7f9fc;
+  color: #444;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+  background: linear-gradient(90deg, #4CAF50, #2196F3);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #fff !important;
+  letter-spacing: 1px;
+}
+
+/* Container Styling */
+.container {
+  max-width: 900px;
+}
+
+/* Email Card */
+.email-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(90deg, #4CAF50, #2196F3);
+  border: none;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  background: #388E3C;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Dashboard Page */
+.dashboard-page {
+  padding: 50px 20px;
+}
+
+/* Flash Messages */
+.alert-messages {
+  margin-bottom: 20px;
+}
+/* General */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f7f9fc;
+  color: #444;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+  background: linear-gradient(90deg, #2a68a7, #4CAF50);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #fff !important;
+}
+
+/* Table Styling */
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table th {
+  background: #2a68a7;
+  color: white;
+  text-align: center;
+}
+
+.table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.badge {
+  font-size: 0.9rem;
+  padding: 8px 12px;
+}
+
+/* Button Styles */
+.btn-primary {
+  background: linear-gradient(90deg, #2a68a7, #4CAF50);
+  border: none;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  background: #388E3C;
+  transform: translateY(-2px);
+}
+
+/* Alerts */
+.alert {
+  font-weight: bold;
+  border-radius: 8px;
+}

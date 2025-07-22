@@ -1,0 +1,52 @@
+<!-- templates/view_entries.html -->
+<div class="container mt-4">
+  <h4>Commodity Entries for Supplier ID: {{ supplier_id }}</h4>
+  {% if entries %}
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Part Number</th>
+            <th>Description</th>
+            <th>Commodity Code</th>
+            <th>Origin</th>
+            <th>Preference</th>
+            <th>Short Code</th>
+            <th>Heading</th>
+            <th>HMRC Description</th>
+            <th>Duty</th>
+            <th>Document</th>
+            <th>Submitted At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in entries %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ entry.husq_part_number }}</td>
+              <td>{{ entry.description }}</td>
+              <td>{{ entry.commodity_code }}</td>
+              <td>{{ entry.origin }}</td>
+              <td>{{ entry.preference }}</td>
+              <td>{{ entry.short_code }}</td>
+              <td>{{ entry.heading }}</td>
+              <td>{{ entry.hmrc_description }}</td>
+              <td>{{ entry.duty }}</td>
+              <td>
+                {% if entry.document_path %}
+                  <a href="{{ entry.document_path }}" target="_blank" class="btn btn-outline-secondary btn-sm">View</a>
+                {% else %}
+                  <span class="text-muted">N/A</span>
+                {% endif %}
+              </td>
+              <td>{{ entry.submission_time }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info mt-3">No entries submitted by this supplier yet.</div>
+  {% endif %}
+</div>
