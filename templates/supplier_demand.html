@@ -100,30 +100,49 @@
       </div>
     </nav>
 
-    <!-- Company Info Section -->
-    <div class="card mb-4">
-      <div class="card-header">Welcome to TradeSphere Global</div>
-      <div class="card-body">
-        <div class="info-section">
-          <div class="info-left">
-            <img src="https://www.krislynx.com/static/media/tradesphereglobal.d705c15bb83fa5728e7a.png" alt="Logo" />
-            <h4 class="mt-3">AI-Powered Global Trade Tariff Portal</h4>
-            <p>TradeSphere simplifies international trade compliance by providing accurate, up-to-date tariff information for UK, EU, and global markets.</p>
-            <ul class="ps-3">
-              <li>Comprehensive HS code lookup</li>
-              <li>Real-time tariff updates</li>
-              <li>Preferential agreement eligibility checks</li>
-              <li>Easy business integration</li>
-            </ul>
-            <a href="https://trade-sphereglobal.com/demo" class="btn btn-outline-primary mt-2">View Demo</a>
-          </div>
-          <div class="info-right">
-            <h5 class="text-success mb-2">How to Fill Supplier Declaration</h5>
-            <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+<!-- Modernized Company Info Section with AI Highlights -->
+<div class="card mb-4 shadow rounded-4 border-0" style="background: #f8fbff;">
+  <div class="card-header bg-white border-0 py-3 px-4 d-flex align-items-center justify-content-between">
+    <h4 class="fw-bold text-primary m-0">Welcome to TradeSphere Global</h4>
+    <img src="https://www.krislynx.com/static/media/tradesphereglobal.d705c15bb83fa5728e7a.png" alt="TradeSphere Logo" style="height: 40px;" />
+  </div>
+  <div class="card-body px-4 py-3">
+    <div class="row g-4 align-items-start">
+      <!-- Left: Info Section -->
+      <div class="col-md-7">
+        <h5 class="fw-semibold text-dark mb-3">AI-Powered Global Trade Tariff Portal</h5>
+        <p class="text-muted">
+          TradeSphere Global is built to solve real-world market challenges in global trade. Our AI-driven engine not only provides
+          <strong>automated supplier declaration assistance</strong> but also uncovers smarter ways to tackle tariff complexities with
+          precision, speed, and reliability.
+        </p>
+         
+        <ul class="list-unstyled mb-3">
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Comprehensive HS Code Lookup</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Real-Time Tariff Intelligence</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> AI-Automated Supplier Declarations</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Origin Preference Validation </li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> Explore Real Solutions to Market Challenges</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> API/CSV Integration for Enterprises</li>
+        </ul>
+        <a href="https://trade-sphereglobal.com/" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+          <i class="bi bi-box-arrow-up-right me-2"></i>View Interactive Demo
+        </a>
+      </div>
+
+      <!-- Right: Video Section -->
+      <div class="col-md-5">
+        <div class="bg-white p-3 rounded-3 shadow-sm border">
+          <h6 class="fw-semibold text-success mb-2">Need Help? Watch the Form & Sheet Filling Guide</h6>
+          <div class="ratio ratio-16x9">
+            <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" title="Supplier Declaration Tutorial" allowfullscreen></iframe>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
 
     <!-- Upload Documents Section -->
     <div class="card mb-4">
@@ -143,35 +162,28 @@
         {% endwith %}
 
         <!-- Upload Form -->
-        <form action="/submit" method="POST" enctype="multipart/form-data">
-          <div class="row g-4 align-items-end">
-
-            <!-- Consent File Upload -->
-            <div class="col-md-9">
-              <label class="form-label">
-                Consent Document <span class="text-muted">(PDF, DOCX, or TXT)</span>:
-              </label>
-              <div class="input-group">
-                <span class="input-group-text bg-light">📎</span>
-                <input type="file" id="consentFile" name="consent" class="form-control" accept=".pdf,.docx,.txt" required>
-              </div>
-              <div id="filePreview" class="mt-2 small text-muted"></div>
-            </div>
-
-            <!-- Side Action Button -->
-            <div class="col-md-3 text-end">
-              <label class="form-label d-none d-md-block">&nbsp;</label>
-              <a href="https://trade-sphereglobal.com/support" class="btn btn-outline-info w-100">Need Help?</a>
-            </div>
-
-            <!-- Save Button -->
-            <div class="col-md-12 text-end">
-              <button type="submit" class="btn btn-primary mt-3">Save</button>
-            </div>
-          </div>
-        </form>
+<form action="/submit" method="POST" enctype="multipart/form-data">
+  <div class="row g-4 align-items-end">
+    <!-- Consent File Upload -->
+    <div class="col-md-9">
+      <label class="form-label">
+        Consent Document <span class="text-muted">(PDF, DOCX, or TXT)</span>:
+      </label>
+      <div class="input-group">
+        <span class="input-group-text bg-light">📎</span>
+        <input type="file" id="consentFile" name="consent" class="form-control" accept=".pdf,.docx,.txt" required>
       </div>
+      <div id="filePreview" class="mt-2 small text-muted"></div>
     </div>
+
+     
+
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-primary w-100">Upload</button>
+    </div>
+  </div>
+</form>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -210,161 +222,234 @@
 </head>
 <body>
 
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">TradeSphere Global - Commodity Entry Sheet</h4>
-            <button class="btn add-row-btn" type="button" onclick="addRows(5)">+ Add 5 More Rows</button>
-        </div>
-        <div class="card-body table-responsive">
-            <!-- ✅ FORM setup -->
-            <form id="entryForm" method="POST" action="/submitform" enctype="multipart/form-data">
-                <input type="hidden" name="supplier_id" value="{{ supplier_id }}">
-                <input type="hidden" name="supplier_username" value="{{ session['username'] }}">
+  <style>
+    .spinner-box {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      margin: 20px auto;
+    }
 
-                <table class="table table-bordered table-hover align-middle text-center">
-                    <thead>
-                        <tr>
-                            <th>Part Number</th>
-                            <th>Description</th>
-                            <th>Commodity Code (10 Digit)</th>
-                            <th>Country of Origin</th>
-                            <th>EU–UK Preference Applies</th>
-                            <th>Upload Doc (if Yes)</th>
-                            <th>Automated Short Code</th>
-                            <th>Commodity Code Heading</th>
-                            <th>HMRC Description</th>
-                            <th>Estimated UK Import Duty</th>
-                            <th>Supporting Document Path</th>
-                        </tr>
-                    </thead>
-                    <tbody id="entryTable">
-                        <!-- Rows injected dynamically -->
-                    </tbody>
-                </table>
+    .blue-spinner {
+      display: flex;
+      justify-content: space-between;
+      width: 50px;
+    }
 
-                <!-- ✅ Submit button -->
-                <div class="text-end">
-                    <button type="submit" class="btn btn-success"> Submit Entries</button>
-                </div>
-            </form>
-        </div>
+    .blue-spinner div {
+      width: 10px;
+      height: 10px;
+      background-color: #007bff;
+      animation: bounce 0.6s infinite alternate;
+    }
+
+    .blue-spinner div:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .blue-spinner div:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .blue-spinner div:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes bounce {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(1.5); opacity: 0.6; }
+    }
+
+    #successMessage {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container-fluid mt-4">
+  
+  <div class="card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">TradeSphere Global - Commodity Entry Sheet</h4>
+      <button class="btn add-row-btn" type="button" onclick="addRows(5)">+ Add 5 More Rows</button>
     </div>
-</div>
+    
+    <div class="card-body table-responsive">
+      <!-- ✅ FORM -->
+      <form id="entryForm" method="POST" action="/submitform" enctype="multipart/form-data">
+        <input type="hidden" name="supplier_id" value="{{ supplier_id }}">
+        <input type="hidden" name="supplier_username" value="{{ session['username'] }}">
 
-<input type="hidden" name="supplier_id" value="{{ supplier_id }}">
+        <table class="table table-bordered table-hover align-middle text-center">
+          <thead>
+            <tr>
+              <th>Part Number</th>
+              <th>Description</th>
+              <th>Commodity Code (10 Digit)</th>
+              <th>Country of Origin</th>
+              <th>EU–UK Preference Applies</th>
+              <th>Upload Doc (if Yes)</th>
+              <th>Automated Short Code</th>
+              <th>Commodity Code Heading</th>
+              <th>HMRC Description</th>
+              <th>Estimated UK Import Duty</th>
+              <th>Stored Doc Path</th>
+            </tr>
+          </thead>
+          <tbody id="entryTable">
+            <!-- Rows added dynamically -->
+          </tbody>
+        </table>
+        <div class="container-fluid">
+  <!-- 🚨 Warning -->
+  <div class="alert alert-warning mt-3" role="alert">
+    ⚠️ <strong>Note:</strong> Once entries are submitted, they cannot be modified. Please review carefully before saving.
+  </div>
+        <div class="text-end">
+          <button type="submit" class="btn btn-success">Submit Entries</button>
+        </div>
+      </form>
 
-<script>
-    let rowCount = 0;
+      <!-- ✅ Spinner -->
+      <div class="spinner-box" id="spinner">
+        <div class="blue-spinner">
+          <div></div><div></div><div></div><div></div>
+        </div>
+      </div>
 
-    function addRows(count) {
-        const table = document.getElementById("entryTable");
-        for (let i = 0; i < count; i++) {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td><input type="text" name="husq[]" class="form-control" required></td>
-                <td><input type="text" name="description[]" class="form-control" required></td>
-                <td>
-                    <input type="text"
-                           name="commodity_code[]"
-                           class="form-control"
-                           maxlength="10"
-                           placeholder="Enter 10-digit code"
-                           onblur="autoFill(${rowCount})"
-                           required>
-                </td>
-                <td>
-                    <select name="origin[]" class="form-control" required>
-                        <option value="">Select</option>
-                        <option value="UK">UK</option>
-                        <option value="EU">EU</option>
-                        <option value="JP">Japan</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </td>
-                <td>
-                    <select name="preference[]" class="form-control" onchange="toggleUpload(this, ${rowCount})" required>
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                    </select>
-                </td>
-                <td><input type="file" name="doc[${rowCount}]" class="form-control d-none" id="doc-${rowCount}" accept=".pdf"></td>
-                <td><input type="text" readonly class="form-control" id="shortcode-${rowCount}"></td>
-                <td><input type="text" readonly class="form-control" id="heading-${rowCount}"></td>
-                <td><input type="text" readonly class="form-control" id="hmrcdesc-${rowCount}"></td>
-                <td><input type="text" readonly class="form-control" id="duty-${rowCount}"></td>
-                <td><input type="text" readonly class="form-control" id="docpath-${rowCount}"></td>
-            `;
-            table.appendChild(row);
-            rowCount++;
-        }
-    }
-
-    function toggleUpload(select, index) {
-        const fileInput = document.getElementById(`doc-${index}`);
-        fileInput.classList.toggle('d-none', select.value !== 'Yes');
-    }
-
-    function autoFill(index) {
-        const codes = document.getElementsByName('commodity_code[]');
-        if (!codes[index]) return;
-
-        const code = codes[index].value.trim();
-        if (!/^\d{10}$/.test(code)) {
-            alert("Commodity code must be a 10-digit number.");
-            return;
-        }
-
-        fetch('/autofill', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ commodity_code: code })
-        })
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById(`shortcode-${index}`).value = data.short_code || '';
-            document.getElementById(`heading-${index}`).value = data.heading || '';
-            document.getElementById(`hmrcdesc-${index}`).value = data.hmrc_description || '';
-            document.getElementById(`duty-${index}`).value = data.duty || '';
-            document.getElementById(`docpath-${index}`).value = data.doc_path || '';
-        })
-        .catch(err => {
-            console.error("AutoFill failed:", err);
-            alert("Autofill failed. Please try again.");
-        });
-    }
-
-    window.onload = () => addRows(5); // Load 5 default rows
-</script>
-
- 
-    <!-- CTA -->
-    <div class="text-center mt-4">
-      <h4 class="mb-3">Ready to streamline your compliance?</h4>
-      <a href="https://trade-sphereglobal.com" target="_blank" class="cta-button">Explore Now</a>
+      <!-- ✅ Success Message -->
+      <div id="successMessage" class="alert alert-success text-center fw-bold">
+        ✅ Entries submitted successfully!
+      </div>
     </div>
   </div>
+<body>
+  
+  
+</div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.getElementById('consentFile').addEventListener('change', function (e) {
-      const preview = document.getElementById('filePreview');
-      preview.innerHTML = '';
-      const file = e.target.files[0];
-      if (file) {
-        const ext = file.name.split('.').pop().toLowerCase();
-        let icon = '📎';
-        if (ext === 'pdf') icon = '📄';
-        else if (ext === 'docx' || ext === 'doc') icon = '📝';
-        else if (ext === 'txt') icon = '📘';
+<!-- JS -->
+<script>
+  let rowCount = 0;
 
-        const fileName = file.name.length > 40 ? file.name.substring(0, 37) + '...' : file.name;
-        preview.innerHTML = `<span class="badge bg-light text-dark">${icon} ${fileName}</span>`;
-      }
+  function addRows(count) {
+    const table = document.getElementById("entryTable");
+    for (let i = 0; i < count; i++) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><input type="text" name="husq[]" class="form-control"></td>
+        <td><input type="text" name="description[]" class="form-control"></td>
+        <td>
+          <input type="text" name="commodity_code[]" class="form-control" maxlength="10"
+                 placeholder="Enter 10-digit code" onblur="autoFill(${rowCount})">
+        </td>
+        <td>
+          <select name="origin[]" class="form-control">
+            <option value="">Select</option>
+            <option value="UK">UK</option>
+            <option value="EU">EU</option>
+            <option value="JP">Japan</option>
+            <option value="Other">Other</option>
+          </select>
+        </td>
+        <td>
+          <select name="preference[]" class="form-control" onchange="toggleUpload(this, ${rowCount})">
+            <option value="">Select</option>
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </td>
+        <td><input type="file" name="doc[${rowCount}]" class="form-control d-none" id="doc-${rowCount}" accept=".pdf"></td>
+        <td><input type="text" readonly class="form-control" id="shortcode-${rowCount}"></td>
+        <td><input type="text" readonly class="form-control" id="heading-${rowCount}"></td>
+        <td><input type="text" readonly class="form-control" id="hmrcdesc-${rowCount}"></td>
+        <td><input type="text" readonly class="form-control" id="duty-${rowCount}"></td>
+        <td><input type="text" readonly class="form-control" id="docpath-${rowCount}"></td>
+      `;
+      table.appendChild(row);
+      rowCount++;
+    }
+  }
+
+  function toggleUpload(select, index) {
+    const fileInput = document.getElementById(`doc-${index}`);
+    fileInput.classList.toggle('d-none', select.value !== 'Yes');
+    if (select.value !== 'Yes') fileInput.value = '';
+  }
+
+  function autoFill(index) {
+    const codes = document.getElementsByName('commodity_code[]');
+    if (!codes[index]) return;
+
+    const code = codes[index].value.trim();
+    if (!/^\d{10}$/.test(code)) {
+      alert("Commodity code must be a 10-digit number.");
+      return;
+    }
+
+    fetch('/autofill', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ commodity_code: code })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById(`shortcode-${index}`).value = data.short_code || '';
+      document.getElementById(`heading-${index}`).value = data.heading || '';
+      document.getElementById(`hmrcdesc-${index}`).value = data.hmrc_description || '';
+      document.getElementById(`duty-${index}`).value = data.duty || '';
+      document.getElementById(`docpath-${index}`).value = data.doc_path || '';
+    })
+    .catch(err => {
+      console.error("AutoFill failed:", err);
+      alert("Autofill failed. Please try again.");
     });
-  </script>
+  }
 
+  window.onload = () => addRows(5);
+
+  // ✅ Spinner + AJAX Form submission with success message
+  const form = document.getElementById('entryForm');
+  const spinner = document.getElementById('spinner');
+  const successMessage = document.getElementById('successMessage');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    spinner.style.display = 'flex';
+    successMessage.style.display = 'none';
+
+    const formData = new FormData(form);
+    fetch(form.action, {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => {
+      if (res.ok) {
+        successMessage.style.display = 'block';
+        form.reset();
+      } else {
+        alert("Submission failed.");
+      }
+    })
+    .catch(() => alert("Submission failed."))
+    .finally(() => {
+      spinner.style.display = 'none';
+    });
+  });
+</script>
+
+
+</div>
+
+<!-- CTA -->
+  <div class="text-center mt-4">
+    <h4 class="mb-3">Ready to streamline your compliance?</h4>
+    <a href="https://trade-sphereglobal.com" target="_blank" class="cta-button btn btn-outline-primary">Explore Now</a>
+  </div>
+ </div>
+ 
   <!-- Footer -->
   <footer class="bg-dark text-light pt-5 mt-5">
     <div class="container">

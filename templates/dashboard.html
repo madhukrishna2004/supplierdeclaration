@@ -160,48 +160,50 @@
             <thead class="table-dark text-center">
               <tr>
                 <th>#</th>
-                <th>📧 Recipient</th>
-                <th>📅 Sent Time</th>
-                <th>📄 Commodity Sheet</th>
-                <th>📝 Supplier Consent</th>
-                <th>✅ Status</th>
+                <th> Recipient</th>
+                <th> Sent Time</th>
+                <th> Commodity Sheet</th>
+                <th> Supplier Consent</th>
+                <th> Status</th>
               </tr>
             </thead>
             <tbody>
               {% if sent_emails %}
-              {% for email in sent_emails %}
-              <tr>
-                <td class="text-center">{{ loop.index }}</td>
-                <td>{{ email.recipient }}</td>
-                <td>{{ email.sent_time }}</td>
-                <td class="text-center">
-  {% if email.commodity_link %}
-    <a href="{{ email.commodity_link }}" target="_blank" class="btn btn-outline-primary btn-sm">📄 View</a>
-  {% else %}
-    <span class="text-muted">Not Available</span>
-  {% endif %}
-</td>
+                {% for email in sent_emails %}
+                  <tr>
+                    <td class="text-center">{{ loop.index }}</td>
+                    <td>{{ email.recipient }}</td>
+                    <td>{{ email.sent_time }}</td>
 
-                <td class="text-center">
-                  {% if email.consent %}
-                  <a href="{{ email.consent }}" target="_blank" class="btn btn-outline-success btn-sm">📝 View</a>
-                  {% else %}
-                  <span class="text-muted">Not Uploaded</span>
-                  {% endif %}
-                </td>
-                <td class="text-center">
-                  {% if email.commodity_link and email.consent %}
-                  <span class="badge bg-success text-white px-3 py-2">✅ Completed</span>
-                  {% else %}
-                  <span class="badge bg-warning text-dark px-3 py-2">⏳ Pending</span>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
+                    <td class="text-center">
+                      {% if email.commodity_link != "Not Available" %}
+                        <a href="{{ email.commodity_link }}" target="_blank" class="btn btn-outline-primary btn-sm">📄 View</a>
+                      {% else %}
+                        <span class="text-muted">Not Available</span>
+                      {% endif %}
+                    </td>
+
+                    <td class="text-center">
+                      {% if email.consent != "Not Uploaded" %}
+                        <a href="{{ email.consent }}" target="_blank" class="btn btn-outline-success btn-sm">📝 View</a>
+                      {% else %}
+                        <span class="text-muted">Not Uploaded</span>
+                      {% endif %}
+                    </td>
+
+                    <td class="text-center">
+                      {% if email.status == 'Completed' %}
+                        <span class="badge bg-success text-white px-3 py-2">✅ Completed</span>
+                      {% else %}
+                        <span class="badge bg-warning text-dark px-3 py-2">⏳ Pending</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
               {% else %}
-              <tr>
-                <td colspan="6" class="text-center text-muted">No emails have been sent yet.</td>
-              </tr>
+                <tr>
+                  <td colspan="6" class="text-center text-muted">No emails have been sent yet.</td>
+                </tr>
               {% endif %}
             </tbody>
           </table>

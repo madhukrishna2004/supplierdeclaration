@@ -617,51 +617,83 @@ def send_pdf_email_notification(file_name, file_url, recipient_email):
     print(f"Sending email to {recipient_email}:\n{body}")
     # Use your email-sending function here
 
+from flask import session, redirect, url_for, render_template
+import psycopg2
+import psycopg2.extras
+import logging
+
+logger = logging.getLogger(__name__)
+
 @app.route('/dashboard')
 def dashboard():
-    """User dashboard with email logs and supplier data."""
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     user_id = session['user_id']
 
     try:
-        # Connect to PostgreSQL
         conn = psycopg2.connect(DATABASE_URL)
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        # Get the user's name
+        # Get user name
         cursor.execute("SELECT name FROM users WHERE id = %s", (user_id,))
         user_record = cursor.fetchone()
         user_name = user_record['name'] if user_record else 'User'
 
-        # 🔁 Join email_logs and supplier_demand using recipient email
+        # Get all email logs with supplier info
         cursor.execute("""
             SELECT 
-                e.id,
+                e.id AS log_id,
                 e.recipient,
                 e.sent_time,
-                CONCAT('/view_entries/', s.id) AS commodity_link,
-
-                s.consent
+                e.supplier_id,
+                s.commodity_link,
+                s.consent,
+                EXISTS (
+                    SELECT 1 FROM supplier_entries se 
+                    WHERE se.supplier_id = e.supplier_id
+                ) AS has_entries
             FROM email_logs e
-            LEFT JOIN supplier_demand s ON e.recipient = s.username
+            LEFT JOIN supplier_demand s ON e.supplier_id = s.supplier_id
             WHERE e.user_id = %s
             ORDER BY e.sent_time DESC
         """, (user_id,))
         
         sent_emails = cursor.fetchall()
 
-    except psycopg2.Error as err:
-        logger.error(f"Database fetch error: {err}")
-        sent_emails = []
+        formatted_emails = []
+        for email in sent_emails:
+            try:
+                sent_time_str = email['sent_time'].strftime('%d-%b-%Y %I:%M %p') if email['sent_time'] else "N/A"
+            except Exception:
+                sent_time_str = "N/A"
+
+            supplier_id = email['supplier_id']
+            commodity_link = f"/view_entries/{supplier_id}" if email['has_entries'] else "Not Available"
+            consent_link = f"/view_consent/{supplier_id}/{email['consent']}" if email['consent'] else "Not Uploaded"
+            status = '✅ Completed' if email['has_entries'] and email['consent'] else '⏳ Pending'
+
+            formatted_emails.append({
+                'recipient': email['recipient'],
+                'sent_time': sent_time_str,
+                'commodity_link': commodity_link,
+                'consent': consent_link,
+                'status': status
+            })
+
+    except Exception as err:
+        logger.error(f"Dashboard error: {err}")
+        formatted_emails = []
         user_name = "User"
 
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
-    return render_template('dashboard.html', user_name=user_name, sent_emails=sent_emails)
+    return render_template('dashboard.html', user_name=user_name, sent_emails=formatted_emails)
+
 
 @app.route("/get_group_emails", methods=["POST"])
 def get_group_emails():
@@ -833,35 +865,47 @@ from datetime import datetime
 #from flask_login import login_required
 
  
+import random
+import hashlib
+import uuid
+from datetime import datetime
+import psycopg2
+
 def generate_credentials(email):
     """
-    Generate a unique username and password for the recipient,
-    and store them in the `supplier_demand` table.
+    Generate a unique supplier_id (integer), username, and password.
+    supplier_id = timestamp (YYYYMMDDHHMMSS) + random 2-digit number
     """
-    unique_suffix = str(uuid.uuid4())[:8]  # Use UUID for uniqueness
+    now = datetime.now()
+    timestamp_str = now.strftime('%Y%m%d%H%M%S')  # e.g., 20250723161542
+    random_suffix = str(random.randint(10, 99))   # 2-digit random number
+    supplier_id = int(timestamp_str + random_suffix)
+
+    unique_suffix = str(uuid.uuid4())[:8]
     username = f"tradesphere_supplier_{unique_suffix}"
-    
-    # Password is SHA1 of email + timestamp (first 12 characters)
-    raw = email + str(datetime.now())
+
+    raw = email + str(now)
     password = hashlib.sha1(raw.encode()).hexdigest()[:12]
-    
+
     try:
         conn = psycopg2.connect(DATABASE_URL)
         cur = conn.cursor()
 
         # Insert into supplier_demand
         cur.execute("""
-            INSERT INTO supplier_demand (username, password)
-            VALUES (%s, %s)
-        """, (username, password))
+            INSERT INTO supplier_demand (supplier_id, username, password)
+            VALUES (%s, %s, %s)
+        """, (supplier_id, username, password))
 
         conn.commit()
         cur.close()
         conn.close()
+
     except Exception as err:
         logger.error(f"❌ Failed to insert into supplier_demand: {err}")
+        supplier_id = None
 
-    return username, password, datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return username, password, supplier_id, now.strftime("%Y-%m-%d %H:%M:%S")
 
 @app.route('/supplier_logout')
 def supplier_logout():
@@ -956,22 +1000,23 @@ def send_email():
     uploads_folder = app.config['UPLOAD_FOLDER']
     preloaded_subject = "🌐 Access Your Supplier Portal – TradeSphere Global Invitation"
     preloaded_message = (
-        "Dear Supplier,\n\n"
-        "On behalf of your partnering company,TradeSphere Global invites you to digitize your compliance process with cutting-edge automation.\n\n"
-        "We’re here to help you streamline Supplier Declarations, reduce manual work, and ensure seamless international trade operations.\n\n"
-        "🔐 Your Secure Portal Access:\n"
-        "👉 Login:  https://supplierdeclarations.com/supplier_login\n\n"
-        "🎓 Need help getting started? Watch our step-by-step video guide:\n"
-        "1. How to log into the Supplier Portal\n"
-        "2. How to fill the Supplier Declaration Form\n"
-        "3. How to complete the Commodity Compliance Sheet\n\n"
-        "📺 Watch here: https://www.youtube.com/watch?v=YOUR_VIDEO_ID\n\n"
-        "💬 Need Help?\n"
-        "Reach out to our support team anytime at: support@trade-sphereglobal.com\n\n"
-        "Thank you for being a part of the new trade era.\n\n"
-        "Warm regards,\n"
-        "Team TradeSphere Global"
-    )
+    "Dear Supplier,\n\n"
+    "On behalf of your partnering company, TradeSphere Global invites you to digitize your compliance process with cutting-edge automation.\n\n"
+    "We are here to help you streamline Supplier Declarations, reduce manual effort, and ensure seamless international trade operations.\n\n"
+    "Your Secure Portal Access:\n"
+    "Login here: https://supplierdeclarations.com/supplier_login\n\n"
+    "Need help getting started? Explore our step-by-step video guides:\n"
+    "1. How to log into the Supplier Portal\n"
+    "2. How to fill the Supplier Declaration Form\n"
+    "3. How to complete the Commodity Compliance Sheet\n\n"
+    "Watch now: https://www.youtube.com/watch?v=YOUR_VIDEO_ID\n\n"
+    "Need assistance?\n"
+    "Reach out to our support team anytime at: support@trade-sphereglobal.com\n\n"
+    "Thank you for being a part of the new trade era.\n\n"
+    "Warm regards,\n"
+    "Team TradeSphere Global"
+)
+
 
     uploaded_attachments = []
 
@@ -1007,34 +1052,36 @@ def send_email():
 
         # ✅ Generate and store login credentials
         credentials_dict = {}
+
         try:
             conn = get_db_connection()
             cur = conn.cursor()
 
             for recipient in recipients:
-                username, password, sent_time = generate_credentials(recipient)
+                username, password, supplier_id, sent_time = generate_credentials(recipient)
+
+                
                 credentials_dict[recipient] = {
+                    "supplier_id": supplier_id,
                     "username": username,
                     "password": password,
                     "sent_time": sent_time
                 }
 
+                # Insert into email_logs including supplier_id
                 cur.execute("""
-                    INSERT INTO email_logs (user_id, recipient, subject, message, username, password, sent_time)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (user_id, recipient, subject, message_body, username, password, sent_time))
-
-                cur.execute("""
-                    INSERT INTO supplier_demand (username, password)
-                    VALUES (%s, %s)
-                """, (username, password))
+                    INSERT INTO email_logs (user_id, supplier_id, recipient, subject, message, username, password, sent_time)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """, (user_id, supplier_id, recipient, subject, message_body, username, password, sent_time))
 
             conn.commit()
             cur.close()
             conn.close()
+
         except Exception as db_err:
             flash("Database error occurred while saving logs.", 'danger')
             return jsonify({"error": str(db_err)}), 500
+
 
         # ✅ Prepare HTML templates per user
         rendered_email_templates = {}
@@ -1154,12 +1201,13 @@ def send_email():
         <p>{{ message_body }}</p>
 
         <div class="credentials-card">
-            <h3>🔐 Login Credentials</h3>
-            <p><strong>Email:</strong> {{ recipient }}</p>
+            <h3>Login Credentials</h3> 
             <p><strong>Username:</strong> {{ cred.username }}</p>
-            <p><strong>Password:</strong> {{ cred.password }}</p>
+            <p><strong>Password:</strong>{{ cred.password }} </p>
+            <p><strong>Supplier ID:</strong> {{ cred.supplier_id }}</p>
+            
             <p><strong>Generated:</strong> {{ cred.sent_time }}</p>
-            <p>👉 <a href="https://supplierdeclarations.com/" target="_blank" style="color:#0052cc;">Login to Supplier Portal</a></p>
+            <p><a href="https://supplierdeclarations.com/" target="_blank" style="color:#0052cc;">Login to Supplier Portal</a></p>
         </div>
 
         <div class="cta-buttons">
@@ -1383,6 +1431,7 @@ def autofill():
     try:
         data = request.get_json(force=True)
         commodity_code = data.get("commodity_code", "").strip()
+        username = session.get('username', 'anonymous')
 
         print(f"\n📨 Auto-fill request received for code: {commodity_code}")
         if not commodity_code or len(commodity_code) != 10:
@@ -1390,12 +1439,17 @@ def autofill():
 
         lookup = lookup_commodity_details(commodity_code)
 
+        # Check if file exists
+        doc_rel_path = f"/download/{username}/{commodity_code}.pdf"
+        doc_abs_path = os.path.join(app.config['UPLOAD_FOLDER'], "preference_reports", username, f"{commodity_code}.pdf")
+        doc_path = doc_rel_path if os.path.exists(doc_abs_path) else ""
+
         result = {
             "short_code": lookup.get("short_code", commodity_code[:4]),
             "heading": lookup.get("heading", "N/A"),
             "hmrc_description": lookup.get("hmrc_description", "N/A"),
             "duty": lookup.get("duty", "N/A"),
-            "doc_path": f"/documents/{commodity_code}.pdf"  # You can customize this
+            "doc_path": doc_path  # ✅ Show if exists, else empty
         }
 
         print(f"✅ Autofill Result: {result}")
@@ -1405,80 +1459,195 @@ def autofill():
         print("❌ Error in /autofill:", str(e))
         return jsonify({"error": "Invalid request format"}), 400
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
+
+
+from sqlalchemy import text
+
+from flask import request, session
+from werkzeug.utils import secure_filename
+import os
+import uuid
+import psycopg2
+#from your_project import app, lookup_commodity_details, allowed_file, logger
+
+DATABASE_URL = os.getenv("DATABASE_URL")  # Use your actual connection URL or load from config
+
 @app.route('/submitform', methods=['POST'])
 def submit_form():
     data = request.form
     files = request.files
-    supplier_id = data.get("supplier_id")
-    username = session.get('username', 'anonymous')
+    username = session.get('supplier_username', 'anonymous')
+    print(f"📩 Received form submission by: {username}")
 
-    rows = zip(
-        data.getlist("husq[]"),
-        data.getlist("description[]"),
-        data.getlist("commodity_code[]"),
-        data.getlist("origin[]"),
-        data.getlist("preference[]")
-    )
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
 
-    for i, (husq, desc, code, origin, pref) in enumerate(rows):
-        lookup = lookup_commodity_details(code)
-        upload_url = None
+        # ✅ Step 1: Fetch supplier_id using username
+        print(f"🔍 Checking supplier_id for username: {username}")
+        cursor.execute("SELECT supplier_id FROM supplier_demand WHERE username = %s", (username,))
+        result = cursor.fetchone()
 
-        if pref == "Yes":
-            file_key = f'doc[{i}]'
-            doc = files.get(file_key)
+        if not result:
+            print("❌ Supplier not found in DB")
+            return "❌ Supplier not found. Please login again.", 400
 
-            if doc and allowed_file(doc.filename):
-                filename = secure_filename(f"{uuid.uuid4()}_{doc.filename}")
-                user_dir = os.path.join(app.config['UPLOAD_FOLDER'], "preference_reports", username)
-                os.makedirs(user_dir, exist_ok=True)
+        supplier_id = result[0]
+        print(f"✅ Found supplier_id: {supplier_id}")
 
-                filepath = os.path.join(user_dir, f"{code}.pdf")
-                doc.save(filepath)
+        # ✅ Step 2: Get form rows
+        husq_list = data.getlist("husq[]")
+        desc_list = data.getlist("description[]")
+        code_list = data.getlist("commodity_code[]")
+        origin_list = data.getlist("origin[]")
+        pref_list = data.getlist("preference[]")
 
-                upload_url = f"/download/{username}/{code}.pdf"
-            else:
-                return "❌ Invalid file format. Only PDF allowed.", 400
+        print(f"🧾 Row counts - HUSQ: {len(husq_list)}, Description: {len(desc_list)}, Code: {len(code_list)}, Origin: {len(origin_list)}, Pref: {len(pref_list)}")
 
-        # INSERT INTO DB
-        db.execute("""
-            INSERT INTO supplier_entries (
-                supplier_id, husq_part_number, description, commodity_code,
-                origin, preference, short_code, heading, hmrc_description,
-                duty, document_path
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            supplier_id, husq, desc, code, origin, pref,
-            lookup.get("short_code", code[:4]),
-            lookup.get("heading", "N/A"),
-            lookup.get("hmrc_description", "N/A"),
-            lookup.get("duty", "N/A"),
-            upload_url
-        ))
+        rows = list(zip(husq_list, desc_list, code_list, origin_list, pref_list))
+        valid_row_found = False
 
-    db.commit()
-    return "Entries submitted successfully"
+        for i, (husq, desc, code, origin, pref) in enumerate(rows):
+            print(f"🔁 Processing Row {i + 1}")
+            husq, desc, code, origin, pref = husq.strip(), desc.strip(), code.strip(), origin.strip(), pref.strip()
 
- 
-@app.route('/entry/<int:supplier_id>')
+            if not any([husq, desc, code, origin, pref]):
+                print(f"⏩ Skipping empty row {i + 1}")
+                continue
+
+            valid_row_found = True
+
+            print(f"📦 Code for lookup: {code}")
+            lookup = lookup_commodity_details(code)
+            print(f"🔍 Lookup Result: {lookup}")
+
+            upload_url = None
+
+            # ✅ Step 3: Handle preference document
+            if pref.lower() == "yes":
+                file_key = f'doc[{i}]'
+                doc = files.get(file_key)
+                print(f"📁 File field {file_key}: {doc.filename if doc else 'No File'}")
+
+                if doc and allowed_file(doc.filename):
+                    filename = secure_filename(f"{uuid.uuid4()}_{doc.filename}")
+                    user_dir = os.path.join(app.config['UPLOAD_FOLDER'], "preference_reports", username)
+                    os.makedirs(user_dir, exist_ok=True)
+
+                    filepath = os.path.join(user_dir, f"{code}.pdf")
+                    doc.save(filepath)
+                    upload_url = f"/download/{username}/{code}.pdf"
+                    print(f"✅ File saved at: {filepath}")
+                else:
+                    print("❌ Invalid file format")
+                    return "❌ Invalid file format. Only .pdf allowed.", 400
+
+            # ✅ Step 4: Insert into DB
+            print("🛠 Inserting into supplier_entries")
+            cursor.execute("""
+                INSERT INTO supplier_entries (
+                    supplier_id, husq_part_number, description, commodity_code,
+                    origin, preference, short_code, heading, hmrc_description,
+                    duty, document_path
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                supplier_id,
+                husq,
+                desc,
+                code,
+                origin,
+                pref,
+                lookup.get("short_code", code[:4]),
+                lookup.get("heading", "N/A"),
+                lookup.get("hmrc_description", "N/A"),
+                lookup.get("duty", "N/A"),
+                upload_url
+            ))
+            print("✅ Row inserted")
+
+        if not valid_row_found:
+            print("❌ No valid rows found")
+            return "❌ No valid rows found. Fill at least one row.", 400
+
+        conn.commit()
+        print("✅ All entries committed successfully")
+        return "✅ Entries submitted successfully"
+
+    except psycopg2.Error as err:
+        print(f"❌ Database error: {err}")
+        return "❌ Database error occurred", 500
+
+    except Exception as ex:
+        print(f"❌ Unexpected error: {ex}")
+        return "❌ Unexpected error occurred", 500
+
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+            print("🔚 Cursor closed")
+        if 'conn' in locals():
+            conn.close()
+            print("🔚 Connection closed")
+
+
+@app.route('/entry/<uuid:supplier_id>')
 def supplier_form(supplier_id):
-    supplier = db.execute("SELECT * FROM supplier_demand WHERE id = %s", (supplier_id,)).fetchone()
+    supplier = db.execute("SELECT * FROM supplier_demand WHERE supplier_id = %s", (str(supplier_id),)).fetchone()
     if not supplier:
         return "Invalid Supplier ID", 404
     return render_template("form.html", supplier_id=supplier_id)
 
 
-@app.route('/view_entries/<int:supplier_id>')
-def view_supplier_entries(supplier_id):
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT * FROM supplier_entries
-        WHERE supplier_id = %s
-        ORDER BY submission_time DESC
-    """, (supplier_id,))
-    entries = cursor.fetchall()
-    return render_template("view_entries.html", entries=entries, supplier_id=supplier_id)
+@app.route('/view_entries/<supplier_id>')
+def view_entries(supplier_id):
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+        cursor.execute("""
+            SELECT * FROM supplier_entries WHERE supplier_id = %s
+        """, (supplier_id,))
+        entries = cursor.fetchall()
+
+        return render_template('view_entries.html', entries=entries, supplier_id=supplier_id)
+
+    except Exception as e:
+        logger.error(f"Error fetching entries for supplier_id {supplier_id}: {e}")
+        return "Internal Server Error", 500
+
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
+from flask import send_from_directory, abort
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+CONSENT_PATH = os.getenv("CONSENT_UPLOAD_PATH", "uploads/consent")
+PREF_PATH = os.getenv("PREF_ORIGINS_PATH", "download")
+
+@app.route('/view_consent/<supplier_id>/<filename>')
+def view_consent(supplier_id, filename):
+    path = os.path.join(CONSENT_PATH, f"tradesphere_supplier_{supplier_id}")
+    try:
+        return send_from_directory(path, filename, as_attachment=False)
+    except FileNotFoundError:
+        return abort(404)
+
+
+# View Commodity File
+@app.route('/view_commodity/<supplier_id>/<filename>')
+def view_commodity(supplier_id, filename):
+    path = os.path.join(PREF_PATH, f"tradesphere_supplier_{supplier_id}")
+    try:
+        return send_from_directory(path, filename, as_attachment=False)
+    except FileNotFoundError:
+        return abort(404)
 
 
 '''@app.route('/oauth_callback')
@@ -1747,40 +1916,39 @@ def submit():
     consent_file = request.files.get("consent")
     commodity_link = request.form.get("commodity_link")
 
-    consent_filename = None
+    # Create user-specific consent folder
+    user_folder = os.path.join(app.config["UPLOAD_FOLDER"], "consent", username)
+    os.makedirs(user_folder, exist_ok=True)
+
+    consent_file_path = None
     if consent_file:
         consent_filename = secure_filename(consent_file.filename)
-        upload_path = os.path.join(app.config["UPLOAD_FOLDER"], consent_filename)
-        consent_file.save(upload_path)
+        consent_file_path = os.path.join(user_folder, consent_filename)
+        consent_file.save(consent_file_path)
 
     try:
         conn = psycopg2.connect(**db_config)
         cur = conn.cursor()
 
-        # ✅ Update supplier_demand
+        # ✅ Update supplier_demand with full path
         cur.execute("""
             UPDATE supplier_demand
             SET consent = %s, commodity_link = %s
             WHERE username = %s
-        """, (consent_filename, commodity_link, username))
+        """, (consent_file_path, commodity_link, username))
 
         # ✅ Update email_logs
-        print("Updating email_logs for:", username)
-        print("PDF file:", consent_filename)
-        print("Form link:", commodity_link)
-
         cur.execute("""
             UPDATE email_logs
             SET pdf_link = %s, form_link = %s
             WHERE username = %s
-        """, (consent_filename, commodity_link, username))
-
-        print("Rows affected in email_logs:", cur.rowcount)
+        """, (consent_file_path, commodity_link, username))
 
         conn.commit()
         cur.close()
         conn.close()
         flash("Documents updated successfully!", "success")
+
     except Exception as e:
         flash(f"Error saving: {e}", "danger")
 
