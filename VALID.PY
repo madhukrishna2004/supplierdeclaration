@@ -1,35 +1,48 @@
-from sqlalchemy import create_engine, text
+import psycopg2
 import os
-from dotenv import load_dotenv
 
-load_dotenv()  # make sure DATABASE_URL is in your .env file
+# Load DATABASE_URL from env
+DATABASE_URL = os.getenv('DATABASE_URL')
 
-engine = create_engine(os.getenv("DATABASE_URL"))
-
-with engine.connect() as conn:
-    # Step 1: Check if column exists already
-    check_result = conn.execute(text("""
-        SELECT column_name FROM information_schema.columns 
-        WHERE table_name='contact_groups' AND column_name='user_id';
-    """)).fetchone()
-
-    if check_result:
-        print("🟡 'user_id' column already exists.")
-    else:
-        print("➕ Adding 'user_id' column...")
-        conn.execute(text("ALTER TABLE contact_groups ADD COLUMN user_id INTEGER;"))
-        print("✅ Added 'user_id' column.")
-
-    # Step 2: Add Foreign Key Constraint
+def fetch_tables_and_columns():
     try:
-        print("🔗 Adding foreign key constraint...")
-        conn.execute(text("""
-            ALTER TABLE contact_groups
-            ADD CONSTRAINT contact_groups_user_id_fkey
-            FOREIGN KEY (user_id)
-            REFERENCES "user"(id);
-        """))
-        print("✅ Foreign key constraint added.")
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+
+        # Step 1: Get all user-defined table names
+        cursor.execute("""
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema='public' AND table_type='BASE TABLE';
+        """)
+        tables = cursor.fetchall()
+
+        all_table_columns = {}
+
+        # Step 2: For each table, get column names and data types
+        for table in tables:
+            table_name = table[0]
+            cursor.execute(f"""
+                SELECT column_name, data_type 
+                FROM information_schema.columns 
+                WHERE table_name = %s
+            """, (table_name,))
+            columns = cursor.fetchall()
+            all_table_columns[table_name] = columns
+
+        return all_table_columns
+
     except Exception as e:
-        print("⚠️ Foreign key constraint failed (maybe already exists or column missing):")
-        print(e)
+        print(f"❌ Error: {e}")
+        return {}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Example usage
+tables_info = fetch_tables_and_columns()
+for table, columns in tables_info.items():
+    print(f"\n🗂 Table: {table}")
+    for col in columns:
+        print(f" - {col[0]} ({col[1]})")
