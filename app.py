@@ -185,6 +185,7 @@ def register():
 
     return render_template('register.html')
 
+
 # Store link in DB (assumed from your original code, adjust as needed)
 def store_link_in_db(user_id, recipient, link, link_type):
     """Mock function to store the link in a database."""
