@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Files</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Upload Files</h1>
+    </header>
+    <main>
+        <div class="form-container">
+            <form action="{{ url_for('upload_files') }}" method="POST" enctype="multipart/form-data">
+                <label for="sender">Sender:</label>
+                <input type="email" id="sender" name="sender" required placeholder="Your email">
+
+                <label for="excel_file">Excel File:</label>
+                <input type="file" id="excel_file" name="excel_file" required>
+
+                <label for="pdf_file">PDF File:</label>
+                <input type="file" id="pdf_file" name="pdf_file" required>
+
+                <button type="submit" class="btn">Upload Files</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
